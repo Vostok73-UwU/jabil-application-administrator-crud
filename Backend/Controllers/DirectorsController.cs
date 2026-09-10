@@ -11,20 +11,17 @@ namespace JabilTest.API.Controllers
     {
         private readonly AppDbContext _context;
 
-        // Inyección de dependencias a través del constructor
         public DirectorsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Directors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
         {
             return await _context.Directors.ToListAsync();
         }
 
-        // GET: api/Directors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Director>> GetDirector(int id)
         {
@@ -38,18 +35,15 @@ namespace JabilTest.API.Controllers
             return director;
         }
 
-        // POST: api/Directors
         [HttpPost]
         public async Task<ActionResult<Director>> PostDirector(Director director)
         {
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
-            // Devuelve un código 201 Created y la ruta para consultar el nuevo recurso
             return CreatedAtAction(nameof(GetDirector), new { id = director.PKDirector }, director);
         }
 
-        // PUT: api/Directors/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDirector(int id, Director director)
         {
@@ -76,10 +70,9 @@ namespace JabilTest.API.Controllers
                 }
             }
 
-            return NoContent(); // Código 204: Petición exitosa, sin contenido que devolver
+            return NoContent();
         }
 
-        // DELETE: api/Directors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDirector(int id)
         {
@@ -95,7 +88,6 @@ namespace JabilTest.API.Controllers
             return NoContent();
         }
 
-        // Método auxiliar privado
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.PKDirector == id);

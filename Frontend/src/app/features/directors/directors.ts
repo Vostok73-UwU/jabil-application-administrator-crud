@@ -132,7 +132,6 @@ export class Directors implements OnInit, OnDestroy {
         complete: () => this.isSaving = false,
         error: (err) => {
           this.isSaving = false;
-          // Magia: Extraemos el mensaje de C# en lugar del genérico
           const errorMessage = err.error?.message || 'Error desconocido al intentar eliminar el director.';
           this.toastService.error(errorMessage);
         }

@@ -16,7 +16,7 @@ Asegúrese de tener instaladas las siguientes herramientas en su entorno local a
 
 *   [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 *   [Node.js](https://nodejs.org/) 20.19 o superior (o una versión compatible con Angular 22)
-*   npm 11.19.0, incluido en la versión de Node recomendada. El proyecto declara esta versión en `Frontend/package.json`.
+*   npm 11.19.0. Puede instalar esa versión con `npm install --global npm@11.19.0` si su instalación de Node incluye otra versión.
 *   [SQL Server](https://www.microsoft.com/es-es/sql-server/sql-server-downloads) (Express o Developer) y SQL Server Management Studio (SSMS) o Azure Data Studio.
 
 La cadena de conexión incluida usa autenticación de Windows contra la instancia `localhost\SQLEXPRESS`. El usuario de Windows que ejecute la API debe tener permisos sobre SQL Server. Si utiliza otra instancia o autenticación, ajuste `Backend/appsettings.json`.
@@ -69,3 +69,47 @@ Siga estos pasos en orden para levantar el entorno de desarrollo correctamente.
 5. Abra `http://localhost:4200` en el navegador.
 
 ---
+
+## 🍎 Ejecución en macOS
+
+El frontend y el backend funcionan en macOS, pero SQL Server no se instala normalmente como un servicio nativo. Puede utilizar una instancia SQL Server remota o ejecutarla en Docker Desktop.
+
+### Opción A: SQL Server con Docker Desktop
+
+1. Instale [Docker Desktop para Mac](https://www.docker.com/products/docker-desktop/).
+2. Cree el contenedor de SQL Server. Cambie `JabilSqlPassword123!` por una contraseña que cumpla los requisitos de SQL Server:
+   ```bash
+   docker run --name jabil-sql \
+     -e ACCEPT_EULA=Y \
+     -e MSSQL_SA_PASSWORD='JabilSqlPassword123!' \
+     -p 1433:1433 \
+     -d mcr.microsoft.com/mssql/server:2022-latest
+   ```
+3. Conéctese a `localhost,1433` desde Azure Data Studio, `sqlcmd` u otra herramienta compatible y ejecute `jabil_ttest/Database/01_Create_Database_And_Tables.sql`.
+4. En `Backend/appsettings.json`, utilice una cadena con autenticación SQL:
+   ```json
+   "DefaultConnection": "Server=localhost,1433;Database=JabilTestDB;User Id=sa;Password=JabilSqlPassword123!;TrustServerCertificate=True;"
+   ```
+
+En Macs con Apple Silicon, Docker Desktop puede ejecutar la imagen de SQL Server mediante emulación. Si esa imagen no funciona en su equipo, use una instancia remota o una máquina virtual compatible.
+
+### Opción B: SQL Server remoto
+
+Ejecute el mismo script en la instancia remota y cambie `Server`, `User Id` y `Password` en `Backend/appsettings.json`. No utilice `Trusted_Connection=True` en macOS salvo que su infraestructura tenga configurada explícitamente autenticación integrada.
+
+Después de configurar la base de datos:
+
+1. Instale el [.NET 10 SDK para macOS](https://dotnet.microsoft.com/download/dotnet/10.0) y una versión compatible de [Node.js](https://nodejs.org/).
+2. En una terminal, ejecute el backend:
+   ```bash
+   cd Backend
+   dotnet restore
+   dotnet run --launch-profile http
+   ```
+3. En otra terminal, ejecute el frontend:
+   ```bash
+   cd Frontend
+   npm ci
+   npm start
+   ```
+4. Abra `http://localhost:4200`. Si la API utiliza otro puerto, actualice `Frontend/src/environments/environment.development.ts`.

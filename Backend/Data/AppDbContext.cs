@@ -9,7 +9,6 @@ namespace JabilTest.API.Data
         {
         }
 
-        // Estas propiedades representan las tablas en SQL Server
         public DbSet<Director> Directors { get; set; }
         public DbSet<Movie> Movies { get; set; }
 
@@ -20,7 +19,6 @@ namespace JabilTest.API.Data
             modelBuilder.Entity<Director>().ToTable("Director");
             modelBuilder.Entity<Movie>().ToTable("Movies");
             
-            // Configuramos el comportamiento al borrar (Delete Cascade)
             modelBuilder.Entity<Movie>()
                 .HasOne(m => m.Director)
                 .WithMany(d => d.Movies)

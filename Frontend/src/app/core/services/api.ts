@@ -13,9 +13,6 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  // ==========================
-  // DIRECTORES
-  // ==========================
   getDirectors(pageNumber = 1, pageSize = 10, search?: string, activeOnly = false): Observable<Director[]> {
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
@@ -41,9 +38,6 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}/Directors/${id}`);
   }
 
-  // ==========================
-  // PELÍCULAS
-  // ==========================
   getMovies(pageNumber = 1, pageSize = 10, search?: string): Observable<Movie[]> {
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())

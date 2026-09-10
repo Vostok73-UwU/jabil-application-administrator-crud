@@ -16,17 +16,14 @@ namespace JabilTest.API.Controllers
             _context = context;
         }
 
-        // GET: api/Movies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            // El .Include(m => m.Director) hace un "JOIN" en SQL automáticamente
             return await _context.Movies
                 .Include(m => m.Director) 
                 .ToListAsync();
         }
 
-        // GET: api/Movies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
@@ -42,11 +39,9 @@ namespace JabilTest.API.Controllers
             return movie;
         }
 
-        // POST: api/Movies
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            // Validamos que el director exista antes de crear la película
             var directorExists = await _context.Directors.AnyAsync(d => d.PKDirector == movie.FKDirector);
             if (!directorExists)
             {
@@ -59,7 +54,6 @@ namespace JabilTest.API.Controllers
             return CreatedAtAction(nameof(GetMovie), new { id = movie.PKMovies }, movie);
         }
 
-        // PUT: api/Movies/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMovie(int id, Movie movie)
         {
@@ -89,7 +83,6 @@ namespace JabilTest.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Movies/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
