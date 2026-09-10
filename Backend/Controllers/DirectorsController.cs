@@ -1,4 +1,5 @@
 using JabilTest.API.Data;
+using JabilTest.API.DTOs;
 using JabilTest.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,6 @@ namespace JabilTest.API.Controllers
     {
         private readonly AppDbContext _context;
 
-        // Inyección de dependencias a través del constructor
         public DirectorsController(AppDbContext context)
         {
             _context = context;
@@ -19,46 +19,124 @@ namespace JabilTest.API.Controllers
 
         // GET: api/Directors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Director>>> GetDirectors()
+        public async Task<ActionResult<PagedResult<DirectorDto>>> GetDirectors(
+            int pageNumber = 1,
+            int pageSize = 10,
+            string? search = null,
+            bool? activeOnly = null)
         {
-            return await _context.Directors.ToListAsync();
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1 || pageSize > 100) pageSize = 10;
+
+            var query = _context.Directors.AsQueryable();
+
+            if (activeOnly == true)
+            {
+                query = query.Where(d => d.Active);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(d => d.Name.Contains(search));
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var directors = await query
+                .OrderBy(d => d.PKDirector)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(d => new DirectorDto
+                {
+                    PKDirector = d.PKDirector,
+                    Name = d.Name,
+                    Age = d.Age,
+                    Active = d.Active,
+                    MoviesCount = d.Movies.Count()
+                })
+                .ToListAsync();
+
+            return Ok(new PagedResult<DirectorDto>
+            {
+                Items = directors,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            });
         }
 
         // GET: api/Directors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Director>> GetDirector(int id)
+        public async Task<ActionResult<DirectorDto>> GetDirector(int id)
         {
-            var director = await _context.Directors.FindAsync(id);
+            var director = await _context.Directors
+                .Include(d => d.Movies)
+                .FirstOrDefaultAsync(d => d.PKDirector == id);
 
             if (director == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"Director con ID {id} no encontrado." });
             }
 
-            return director;
+            return Ok(new DirectorDto
+            {
+                PKDirector = director.PKDirector,
+                Name = director.Name,
+                Age = director.Age,
+                Active = director.Active,
+                MoviesCount = director.Movies.Count
+            });
         }
 
         // POST: api/Directors
         [HttpPost]
-        public async Task<ActionResult<Director>> PostDirector(Director director)
+        public async Task<ActionResult<DirectorDto>> PostDirector(CreateDirectorDto createDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var director = new Director
+            {
+                Name = createDto.Name,
+                Age = createDto.Age,
+                Active = createDto.Active
+            };
+
             _context.Directors.Add(director);
             await _context.SaveChangesAsync();
 
-            // Devuelve un código 201 Created y la ruta para consultar el nuevo recurso
-            return CreatedAtAction(nameof(GetDirector), new { id = director.PKDirector }, director);
+            var resultDto = new DirectorDto
+            {
+                PKDirector = director.PKDirector,
+                Name = director.Name,
+                Age = director.Age,
+                Active = director.Active,
+                MoviesCount = 0
+            };
+
+            return CreatedAtAction(nameof(GetDirector), new { id = director.PKDirector }, resultDto);
         }
 
         // PUT: api/Directors/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDirector(int id, Director director)
+        public async Task<IActionResult> PutDirector(int id, UpdateDirectorDto updateDto)
         {
-            if (id != director.PKDirector)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("El ID de la URL no coincide con el ID del cuerpo de la petición.");
+                return BadRequest(ModelState);
             }
 
-            _context.Entry(director).State = EntityState.Modified;
+            var director = await _context.Directors.FindAsync(id);
+            if (director == null)
+            {
+                return NotFound(new { message = $"Director con ID {id} no encontrado." });
+            }
+
+            director.Name = updateDto.Name;
+            director.Age = updateDto.Age;
+            director.Active = updateDto.Active;
 
             try
             {
@@ -68,34 +146,47 @@ namespace JabilTest.API.Controllers
             {
                 if (!DirectorExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = $"Director con ID {id} no encontrado." });
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent(); // Código 204: Petición exitosa, sin contenido que devolver
+            return NoContent();
         }
 
         // DELETE: api/Directors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDirector(int id)
         {
-            var director = await _context.Directors.FindAsync(id);
+            var director = await _context.Directors
+                .Include(d => d.Movies)
+                .FirstOrDefaultAsync(d => d.PKDirector == id);
+
             if (director == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"Director con ID {id} no encontrado." });
+            }
+
+            // Retornamos el error en formato JSON para que Angular lo pueda leer
+            if (director.Movies.Count > 0)
+            {
+                return BadRequest(new { message = $"No se puede eliminar el director '{director.Name}' porque tiene {director.Movies.Count} película(s) asociada(s). Elimine primero las películas o inactívelo." });
             }
 
             _context.Directors.Remove(director);
-            await _context.SaveChangesAsync();
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest(new { message = "Error de base de datos: No se puede eliminar este director por una restricción de llave foránea." });
+            }
 
             return NoContent();
         }
 
-        // Método auxiliar privado
         private bool DirectorExists(int id)
         {
             return _context.Directors.Any(e => e.PKDirector == id);

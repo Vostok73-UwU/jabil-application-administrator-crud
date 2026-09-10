@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JabilTest.API.Models
 {
+    [Table("Director")]
     public class Director
     {
         [Key]
