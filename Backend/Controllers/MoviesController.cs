@@ -1,5 +1,4 @@
 using JabilTest.API.Data;
-using JabilTest.API.DTOs;
 using JabilTest.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,54 +18,17 @@ namespace JabilTest.API.Controllers
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<PagedResult<MovieDto>>> GetMovies(
-            int pageNumber = 1,
-            int pageSize = 10,
-            string? search = null)
+        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            if (pageNumber < 1) pageNumber = 1;
-            if (pageSize < 1 || pageSize > 100) pageSize = 10;
-
-            var query = _context.Movies
-                .Include(m => m.Director)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                query = query.Where(m => m.Name.Contains(search) || 
-                                        (m.Gender != null && m.Gender.Contains(search)) ||
-                                        (m.Director != null && m.Director.Name.Contains(search)));
-            }
-
-            var totalCount = await query.CountAsync();
-
-            var movies = await query
-                .OrderBy(m => m.PKMovies)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .Select(m => new MovieDto
-                {
-                    PKMovies = m.PKMovies,
-                    Name = m.Name,
-                    Gender = m.Gender,
-                    Duration = m.Duration,
-                    FKDirector = m.FKDirector,
-                    DirectorName = m.Director!.Name
-                })
+            // El .Include(m => m.Director) hace un "JOIN" en SQL automáticamente
+            return await _context.Movies
+                .Include(m => m.Director) 
                 .ToListAsync();
-
-            return Ok(new PagedResult<MovieDto>
-            {
-                Items = movies,
-                TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            });
         }
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MovieDto>> GetMovie(int id)
+        public async Task<ActionResult<Movie>> GetMovie(int id)
         {
             var movie = await _context.Movies
                 .Include(m => m.Director)
@@ -74,86 +36,39 @@ namespace JabilTest.API.Controllers
 
             if (movie == null)
             {
-                return NotFound($"Película con ID {id} no encontrada.");
+                return NotFound();
             }
 
-            return Ok(new MovieDto
-            {
-                PKMovies = movie.PKMovies,
-                Name = movie.Name,
-                Gender = movie.Gender,
-                Duration = movie.Duration,
-                FKDirector = movie.FKDirector,
-                DirectorName = movie.Director!.Name
-            });
+            return movie;
         }
 
         // POST: api/Movies
         [HttpPost]
-        public async Task<ActionResult<MovieDto>> PostMovie(CreateMovieDto createDto)
+        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var directorExists = await _context.Directors.AnyAsync(d => d.PKDirector == createDto.FKDirector);
+            // Validamos que el director exista antes de crear la película
+            var directorExists = await _context.Directors.AnyAsync(d => d.PKDirector == movie.FKDirector);
             if (!directorExists)
             {
-                return BadRequest($"El director con ID {createDto.FKDirector} no existe.");
+                return BadRequest("El ID del director proporcionado no existe en la base de datos.");
             }
-
-            var movie = new Movie
-            {
-                Name = createDto.Name,
-                Gender = createDto.Gender,
-                Duration = createDto.Duration,
-                FKDirector = createDto.FKDirector
-            };
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            var director = await _context.Directors.FindAsync(movie.FKDirector);
-
-            var resultDto = new MovieDto
-            {
-                PKMovies = movie.PKMovies,
-                Name = movie.Name,
-                Gender = movie.Gender,
-                Duration = movie.Duration,
-                FKDirector = movie.FKDirector,
-                DirectorName = director!.Name
-            };
-
-            return CreatedAtAction(nameof(GetMovie), new { id = movie.PKMovies }, resultDto);
+            return CreatedAtAction(nameof(GetMovie), new { id = movie.PKMovies }, movie);
         }
 
         // PUT: api/Movies/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovie(int id, UpdateMovieDto updateDto)
+        public async Task<IActionResult> PutMovie(int id, Movie movie)
         {
-            if (!ModelState.IsValid)
+            if (id != movie.PKMovies)
             {
-                return BadRequest(ModelState);
+                return BadRequest("El ID de la URL no coincide con el cuerpo de la petición.");
             }
 
-            var movie = await _context.Movies.FindAsync(id);
-            if (movie == null)
-            {
-                return NotFound($"Película con ID {id} no encontrada.");
-            }
-
-            var directorExists = await _context.Directors.AnyAsync(d => d.PKDirector == updateDto.FKDirector);
-            if (!directorExists)
-            {
-                return BadRequest($"El director con ID {updateDto.FKDirector} no existe.");
-            }
-
-            movie.Name = updateDto.Name;
-            movie.Gender = updateDto.Gender;
-            movie.Duration = updateDto.Duration;
-            movie.FKDirector = updateDto.FKDirector;
+            _context.Entry(movie).State = EntityState.Modified;
 
             try
             {
@@ -163,9 +78,12 @@ namespace JabilTest.API.Controllers
             {
                 if (!MovieExists(id))
                 {
-                    return NotFound($"Película con ID {id} no encontrada.");
+                    return NotFound();
                 }
-                throw;
+                else
+                {
+                    throw;
+                }
             }
 
             return NoContent();
@@ -178,7 +96,7 @@ namespace JabilTest.API.Controllers
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)
             {
-                return NotFound($"Película con ID {id} no encontrada.");
+                return NotFound();
             }
 
             _context.Movies.Remove(movie);

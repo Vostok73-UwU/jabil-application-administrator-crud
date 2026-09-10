@@ -1,18 +1,10 @@
 using JabilTest.API.Data;
-using JabilTest.API.Middleware;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Agregar servicios de Controladores y Swagger (Documentación)
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-    });
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -32,8 +24,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // 4. Configurar el pipeline de solicitudes HTTP
-app.UseExceptionMiddleware();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
