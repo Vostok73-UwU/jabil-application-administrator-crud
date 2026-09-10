@@ -1,0 +1,74 @@
+<mat-form-field 
+  [appearance]="appearance()" 
+  class="jb-select__field"
+  [color]="error() ? 'warn' : 'primary'">
+  
+  <mat-label>{{ label() }}</mat-label>
+  
+  <mat-select
+    [id]="controlId"
+    [placeholder]="placeholder()"
+    [required]="required()"
+    [disabled]="disabled()"
+    [value]="value()"
+    [multiple]="multiple()"
+    [compareWith]="compareWith()"
+    [attr.aria-label]="ariaLabel() || null"
+    [attr.aria-describedby]="ariaDescribedBy() || null"
+    [attr.aria-invalid]="error() ? 'true' : 'false'"
+    (selectionChange)="onSelectionChange($event)"
+    (blur)="onBlur($event)"
+    (focus)="onFocus($event)"
+    (openedChange)="onOpenedChange($event)">
+    
+    @if (prefixIcon()) {
+      <mat-icon matPrefix class="jb-select__prefix">{{ prefixIcon() }}</mat-icon>
+    }
+    
+    @if (searchable()) {
+      <mat-option disabled class="jb-select__search-wrapper">
+        <input 
+          type="text" 
+          class="jb-select__search" 
+          placeholder="Buscar..." 
+          [value]="searchQuery()"
+          (click)="$event.stopPropagation()"
+          (input)="onSearch($event)">
+      </mat-option>
+    }
+    
+    @if (hasGroups()) {
+      @for (group of groupedOptions(); track group.name) {
+        @if (group.name) {
+          <mat-optgroup [label]="group.name">
+            @for (opt of group.options; track opt.value) {
+              <mat-option [value]="opt.value" [disabled]="opt.disabled">
+                {{ opt.label }}
+              </mat-option>
+            }
+          </mat-optgroup>
+        } @else {
+          @for (opt of group.options; track opt.value) {
+            <mat-option [value]="opt.value" [disabled]="opt.disabled">
+              {{ opt.label }}
+            </mat-option>
+          }
+        }
+      }
+    } @else {
+      @for (opt of filteredOptions(); track opt.value) {
+        <mat-option [value]="opt.value" [disabled]="opt.disabled">
+          {{ opt.label }}
+        </mat-option>
+      }
+    }
+  </mat-select>
+  
+  @if (hint() && !error()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
+  
+  @if (error()) {
+    <mat-error>{{ error() }}</mat-error>
+  }
+</mat-form-field>

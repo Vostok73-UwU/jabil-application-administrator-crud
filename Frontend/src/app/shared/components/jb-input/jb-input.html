@@ -1,0 +1,65 @@
+<mat-form-field 
+  [appearance]="appearance()" 
+  class="jb-input__field"
+  [color]="error() ? 'warn' : 'primary'">
+  
+  @if (label()) {
+    <mat-label>{{ label() }}</mat-label>
+  }
+  
+  <input 
+    matInput
+    [id]="controlId"
+    [type]="effectiveType()"
+    [placeholder]="placeholder()"
+    [required]="required()"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [value]="value()"
+    [attr.maxlength]="maxLength() || null"
+    [autocomplete]="autocomplete()"
+    [attr.aria-label]="ariaLabel() || null"
+    [attr.aria-describedby]="ariaDescribedBy() || null"
+    [attr.aria-invalid]="error() ? 'true' : 'false'"
+    (input)="onInput($event)"
+    (blur)="onBlur($event)"
+    (focus)="onFocus($event)">
+  
+  @if (prefixIcon()) {
+    <mat-icon matPrefix class="jb-input__prefix" [matTooltip]="label()">{{ prefixIcon() }}</mat-icon>
+  }
+  
+  @if (showClear()) {
+    <button 
+      matSuffix 
+      type="button" 
+      class="jb-input__clear" 
+      (click)="onClear($event)"
+      matTooltip="Limpiar"
+      aria-label="Limpiar campo">
+      <mat-icon>close</mat-icon>
+    </button>
+  } @else if (showPasswordToggle()) {
+    <button 
+      matSuffix 
+      type="button" 
+      class="jb-input__toggle" 
+      (click)="onPasswordToggle($event)"
+      [matTooltip]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      aria-label="Alternar visibilidad de contraseña">
+      <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+  } @else if (suffixIcon()) {
+    <mat-icon matSuffix class="jb-input__suffix">{{ suffixIcon() }}</mat-icon>
+  }
+  
+  @if (hint() && !error()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
+  
+  @if (error()) {
+    <mat-error>{{ error() }}</mat-error>
+  } @else if (counter()) {
+    <mat-hint align="end" class="jb-input__counter">{{ counterText() }}</mat-hint>
+  }
+</mat-form-field>

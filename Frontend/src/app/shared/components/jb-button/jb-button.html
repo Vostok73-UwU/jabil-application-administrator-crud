@@ -1,0 +1,34 @@
+<!-- Envolvemos el botón en un contenedor que toma las clases dinámicamente -->
+<div
+  class="jb-button"
+  [ngClass]="[
+    'jb-button--' + variant(),
+    'jb-button--' + size(),
+    fullWidth() ? 'jb-button--full-width' : '',
+    loading() ? 'jb-button--loading' : '',
+    (disabled() || loading()) ? 'jb-button--disabled' : ''
+  ]"
+>
+  <button
+    [type]="type()"
+    [disabled]="disabled() || loading()"
+    (click)="onClick($event)"
+    class="jb-button__inner"
+    [attr.aria-label]="ariaLabel() || null"
+    [attr.aria-busy]="loading()">
+    
+    @if (loading()) {
+      <mat-spinner diameter="20" class="jb-button__spinner"></mat-spinner>
+    } @else {
+      @if (iconStart()) {
+        <mat-icon class="jb-button__icon jb-button__icon--start">{{ iconStart() }}</mat-icon>
+      }
+      
+      <span class="jb-button__label"><ng-content></ng-content></span>
+      
+      @if (iconEnd()) {
+        <mat-icon class="jb-button__icon jb-button__icon--end">{{ iconEnd() }}</mat-icon>
+      }
+    }
+  </button>
+</div>

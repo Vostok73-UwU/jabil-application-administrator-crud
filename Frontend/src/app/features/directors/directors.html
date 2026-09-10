@@ -1,0 +1,153 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Gestión de Directores</h1>
+    <p class="page-subtitle">Administra los directores y su información</p>
+  </div>
+
+  <div class="content-grid">
+    <section class="form-section" aria-labelledby="form-title">
+      <div class="jb-card form-card">
+        <header class="card-header">
+          <h2 id="form-title" class="card-title">{{ isEditing ? 'Editar Director' : 'Registrar Nuevo Director' }}</h2>
+        </header>
+        
+        <form #directorForm="ngForm" (ngSubmit)="saveDirector(directorForm)" class="card-content">
+          <div class="form-grid">
+            <jb-input
+              label="Nombre Completo"
+              placeholder="Ej. Christopher Nolan"
+              [(ngModel)]="currentDirector.name"
+              name="name"
+              prefixIcon="person"
+              [required]="true"
+              error="El nombre es obligatorio">
+            </jb-input>
+
+            <jb-input
+              label="Edad"
+              placeholder="Ej. 54"
+              type="number"
+              [(ngModel)]="currentDirector.age"
+              name="age"
+              prefixIcon="cake"
+              [maxLength]="3">
+            </jb-input>
+
+            <div class="checkbox-field field-full">
+              <mat-checkbox [(ngModel)]="currentDirector.active" name="active" color="primary">
+                Estado Activo
+              </mat-checkbox>
+            </div>
+
+            <div class="field-actions field-full">
+              <jb-button
+                variant="primary"
+                type="submit"
+                [loading]="isSaving"
+                [disabled]="!canSave()"
+                iconStart="save"
+                class="btn-submit">
+                {{ isSaving ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Guardar') }}
+              </jb-button>
+              <button
+                mat-stroked-button
+                type="button"
+                *ngIf="isEditing"
+                (click)="resetForm(directorForm)"
+                class="btn-cancel">
+                <mat-icon>close</mat-icon>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="table-section" aria-labelledby="table-title">
+      <div class="jb-card table-card">
+        <header class="card-header">
+          <h2 id="table-title" class="card-title">Listado de Directores</h2>
+          <span class="card-subtitle">{{ totalCount() }} directores en total</span>
+        </header>
+        
+        <div class="card-content table-wrapper">
+          <table mat-table [dataSource]="directors()" class="jb-table custom-table">
+            <ng-container matColumnDef="pkDirector">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let element">{{ element.pkDirector }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nombre</th>
+              <td mat-cell *matCellDef="let element"><strong>{{ element.name }}</strong></td>
+            </ng-container>
+
+            <ng-container matColumnDef="age">
+              <th mat-header-cell *matHeaderCellDef>Edad</th>
+              <td mat-cell *matCellDef="let element">
+                <span [class.text-muted]="element.age === null || element.age === undefined">{{ element.age ?? '—' }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef>Estado</th>
+              <td mat-cell *matCellDef="let element">
+                <span class="status-badge" [class.active]="element.active" [class.inactive]="!element.active">
+                  <mat-icon>{{ element.active ? 'check_circle' : 'cancel' }}</mat-icon>
+                  {{ element.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="action-buttons">
+                  <button mat-icon-button color="primary" (click)="editDirector(element)" title="Editar" [disabled]="isSaving" class="action-btn">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteDirector(element.pkDirector)" title="Eliminar" [disabled]="isSaving" class="action-btn">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-hover"></tr>
+            
+            <!-- Skeleton rows while loading -->
+            <tr *ngIf="isTableLoading()" class="jb-skeleton-row">
+              <td colspan="5" class="p-0">
+                <jb-skeleton variant="table-row" [count]="5"></jb-skeleton>
+              </td>
+            </tr>
+            
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="5">
+                <div class="empty-state">
+                  <mat-icon>person</mat-icon>
+                  <p>No hay directores registrados</p>
+                  <span>Crea el primer director usando el formulario</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Paginator -->
+        <div class="table-paginator" *ngIf="totalCount() > pageSize()">
+          <mat-paginator
+            [length]="totalCount()"
+            [pageSize]="pageSize()"
+            [pageIndex]="pageIndex()"
+            [pageSizeOptions]="pageSizeOptions"
+            [showFirstLastButtons]="true"
+            aria-label="Paginación de directores">
+          </mat-paginator>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+.jb-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--jabil-z-header);
+  height: var(--jabil-header-height);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--jabil-border);
+  transition: background-color var(--jabil-transition-base), border-color var(--jabil-transition-base);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: var(--jabil-content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--jabil-space-6);
+  gap: var(--jabil-space-6);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--jabil-space-2);
+  text-decoration: none;
+  color: var(--jabil-text-primary);
+  font-weight: 600;
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+  transition: opacity var(--jabil-transition-fast);
+  
+  &:hover { opacity: 0.8; }
+}
+
+.brand-icon {
+  font-size: 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--jabil-primary);
+  background: var(--jabil-primary-light);
+  border-radius: var(--jabil-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--jabil-space-1);
+  
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--jabil-space-2);
+    padding: var(--jabil-space-2) var(--jabil-space-4);
+    color: var(--jabil-text-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    border-radius: var(--jabil-radius-md);
+    transition: all var(--jabil-transition-fast);
+    text-decoration: none;
+    min-height: 40px;
+    
+    &:hover {
+      color: var(--jabil-text-primary);
+      background: var(--jabil-surface-hover);
+    }
+    
+    &.active {
+      color: var(--jabil-primary);
+      background: var(--jabil-primary-light);
+      
+      mat-icon { color: var(--jabil-primary); }
+    }
+    
+    mat-icon {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+      color: inherit;
+      transition: color var(--jabil-transition-fast);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content { padding: 0 var(--jabil-space-4); }
+  .brand-text { display: none; }
+  .nav-tabs a span { display: none; }
+  .nav-tabs a { padding: var(--jabil-space-2); min-width: 40px; justify-content: center; }
+  .page-wrapper { padding: var(--jabil-space-6) var(--jabil-space-4); }
+}

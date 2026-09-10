@@ -1,0 +1,359 @@
+@use './theme' as *;
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  
+  @include mat.theme((
+    density: -1,
+  ));
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--jabil-primary-light);
+  color: var(--jabil-primary-dark);
+}
+
+.toast-success {
+  background-color: var(--jabil-success-500) !important;
+  color: white !important;
+}
+
+.toast-error {
+  background-color: var(--jabil-error-500) !important;
+  color: white !important;
+}
+
+.toast-warning {
+  background-color: var(--jabil-warning-500) !important;
+  color: white !important;
+}
+
+.toast-info {
+  background-color: var(--jabil-info-500) !important;
+  color: white !important;
+}
+
+/* ============================================================================
+   Global Material Form Field Overrides - Jabil Design System
+   ============================================================================ */
+
+.mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: var(--jabil-surface);
+  --mdc-filled-text-field-focus-container-color: var(--jabil-surface);
+  --mdc-filled-text-field-hover-container-color: var(--jabil-surface-hover);
+  --mdc-outlined-text-field-container-color: var(--jabil-surface);
+  --mdc-outlined-text-field-focus-container-color: var(--jabil-surface);
+  --mdc-outlined-text-field-hover-container-color: var(--jabil-surface-hover);
+  
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__trailing,
+  .mdc-notched-outline__notch {
+    border-color: var(--jabil-border);
+    transition: border-color var(--jabil-transition-fast);
+  }
+  
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__trailing,
+    .mdc-notched-outline__notch {
+      border-color: var(--jabil-border-focus);
+      border-width: 2px;
+    }
+    
+    .mat-mdc-form-field-label {
+      color: var(--jabil-primary);
+    }
+  }
+  
+  &.mat-form-field-invalid {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__trailing,
+    .mdc-notched-outline__notch {
+      border-color: var(--jabil-error-500);
+    }
+    
+    .mat-mdc-form-field-label {
+      color: var(--jabil-error-500);
+    }
+  }
+  
+  .mat-mdc-form-field-label {
+    color: var(--jabil-text-secondary);
+    transition: color var(--jabil-transition-fast);
+  }
+  
+  .mat-mdc-form-field-hint {
+    color: var(--jabil-text-muted);
+  }
+  
+  .mat-mdc-form-field-error {
+    color: var(--jabil-error-500);
+  }
+  
+  .mat-mdc-form-field-prefix,
+  .mat-mdc-form-field-suffix {
+    color: var(--jabil-text-muted);
+  }
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: transparent !important;
+}
+
+.mat-mdc-input-element {
+  color: var(--jabil-text-primary) !important;
+  caret-color: var(--jabil-primary);
+  
+  &::placeholder {
+    color: var(--jabil-text-muted);
+    opacity: 1;
+  }
+}
+
+/* Select */
+.mat-mdc-select {
+  .mat-mdc-select-arrow {
+    color: var(--jabil-text-muted);
+  }
+  
+  &:hover .mat-mdc-select-arrow {
+    color: var(--jabil-text-primary);
+  }
+}
+
+.mat-mdc-select-value {
+  color: var(--jabil-text-primary);
+}
+
+.mat-mdc-select-trigger {
+  min-height: 48px;
+}
+
+/* Checkbox */
+.mat-mdc-checkbox {
+  --mdc-checkbox-selected-icon-color: var(--jabil-primary);
+  --mdc-checkbox-unselected-icon-color: var(--jabil-text-muted);
+  --mdc-checkbox-hover-state-layer-color: var(--jabil-primary);
+  
+  &.mat-accent {
+    --mdc-checkbox-selected-icon-color: var(--jabil-primary);
+  }
+}
+
+/* Radio */
+.mat-mdc-radio {
+  --mdc-radio-selected-icon-color: var(--jabil-primary);
+  --mdc-radio-unselected-icon-color: var(--jabil-text-muted);
+}
+
+/* Button base */
+button[mat-button],
+button[mat-flat-button],
+button[mat-stroked-button],
+button[mat-icon-button],
+button[mat-fab],
+button[mat-mini-fab],
+a[mat-button],
+a[mat-flat-button],
+a[mat-stroked-button] {
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: var(--jabil-radius-md);
+  transition: all var(--jabil-transition-fast);
+}
+
+button[mat-flat-button][color="primary"] {
+  --mdc-filled-button-container-color: var(--jabil-primary);
+  --mdc-filled-button-label-text-color: white;
+  
+  &:hover {
+    --mdc-filled-button-container-color: var(--jabil-primary-hover);
+    box-shadow: var(--jabil-shadow-2);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    --mdc-filled-button-container-color: var(--jabil-primary-dark);
+  }
+}
+
+button[mat-stroked-button] {
+  --mdc-outlined-button-outline-color: var(--jabil-border);
+  --mdc-outlined-button-label-text-color: var(--jabil-text-secondary);
+  
+  &:hover {
+    --mdc-outlined-button-outline-color: var(--jabil-border-hover);
+    --mdc-outlined-button-label-text-color: var(--jabil-text-primary);
+    background: var(--jabil-surface-hover);
+  }
+}
+
+button[mat-icon-button] {
+  border-radius: var(--jabil-radius-full);
+  
+  &:hover {
+    background: var(--jabil-surface-hover);
+  }
+}
+
+button[mat-button] {
+  &:hover {
+    background: var(--jabil-surface-hover);
+  }
+}
+
+/* Card */
+.mat-mdc-card {
+  --mdc-card-container-color: var(--jabil-surface);
+  --mdc-card-outlined-border-color: var(--jabil-border);
+  border-radius: var(--jabil-radius-lg);
+  box-shadow: var(--jabil-shadow-1);
+  border: 1px solid var(--jabil-border);
+  transition: box-shadow var(--jabil-transition-base), border-color var(--jabil-transition-base);
+  
+  &:hover {
+    box-shadow: var(--jabil-shadow-2);
+    border-color: var(--jabil-border-hover);
+  }
+}
+
+/* Table */
+.mat-mdc-table {
+  --mdc-table-row-hover-background-color: var(--jabil-surface-hover);
+}
+
+.mat-mdc-header-cell {
+  --mdc-table-header-cell-text-color: var(--jabil-text-secondary);
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mat-mdc-cell {
+  --mdc-table-cell-text-color: var(--jabil-text-primary);
+}
+
+/* Tooltip */
+.mat-mdc-tooltip {
+  --mdc-tooltip-container-color: var(--jabil-neutral-900);
+  --mdc-tooltip-label-text-color: white;
+  border-radius: var(--jabil-radius-sm);
+  padding: var(--jabil-space-2) var(--jabil-space-3);
+  font-size: 0.75rem;
+}
+
+/* Snackbar */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--jabil-surface-elevated);
+  --mdc-snackbar-label-text-color: var(--jabil-text-primary);
+  box-shadow: var(--jabil-shadow-4);
+  border-radius: var(--jabil-radius-lg);
+  border: 1px solid var(--jabil-border);
+}
+
+/* Progress Bar */
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-primary-color: var(--jabil-primary);
+  --mdc-linear-progress-secondary-color: var(--jabil-primary-light);
+  height: 4px;
+  border-radius: var(--jabil-radius-full);
+}
+
+/* Dialog */
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: var(--jabil-surface);
+  border-radius: var(--jabil-radius-xl);
+  box-shadow: var(--jabil-shadow-4);
+  border: 1px solid var(--jabil-border);
+}
+
+/* Select Panel (Overlay) - Fix transparent background */
+.mat-mdc-select-panel {
+  --mdc-menu-container-color: var(--jabil-surface-elevated);
+  --mdc-menu-item-label-text-color: var(--jabil-text-primary);
+  --mdc-menu-item-selected-state-layer-color: var(--jabil-primary-light);
+  box-shadow: var(--jabil-shadow-4);
+  border: 1px solid var(--jabil-border);
+  border-radius: var(--jabil-radius-lg);
+  padding: var(--jabil-space-2) 0;
+}
+
+.mat-mdc-select-panel .mat-mdc-option {
+  --mdc-list-item-label-text-color: var(--jabil-text-primary);
+  --mdc-list-item-selected-state-layer-color: var(--jabil-primary-light);
+  border-radius: var(--jabil-radius-sm);
+  margin: 2px var(--jabil-space-2);
+  padding: var(--jabil-space-2) var(--jabil-space-3);
+  
+  &:hover {
+    --mdc-list-item-selected-state-layer-color: var(--jabil-primary-light);
+    background: var(--jabil-surface-hover);
+  }
+  
+  &.mat-mdc-option-selected {
+    --mdc-list-item-selected-state-layer-color: var(--jabil-primary-light);
+    background: var(--jabil-primary-light);
+    color: var(--jabil-primary-dark);
+    font-weight: 500;
+  }
+}
+
+.mat-mdc-select-panel .mat-mdc-optgroup-label {
+  color: var(--jabil-text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--jabil-space-2) var(--jabil-space-3);
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(16, 31, 47, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: var(--jabil-z-modal);
+  backdrop-filter: blur(2px);
+}
+
+.mat-mdc-form-field-error {
+  color: var(--jabil-error-500) !important;
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--jabil-surface-elevated);
+  --mdc-snackbar-label-text-color: var(--jabil-text-primary);
+  box-shadow: var(--jabil-shadow-4);
+  border-radius: var(--jabil-radius-lg);
+  border: 1px solid var(--jabil-border);
+}
+
+.mat-mdc-tooltip {
+  --mdc-tooltip-container-color: var(--jabil-neutral-900);
+  --mdc-tooltip-label-text-color: white;
+}

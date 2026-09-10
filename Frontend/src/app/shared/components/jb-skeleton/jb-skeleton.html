@@ -1,0 +1,32 @@
+@if (variant() === 'table-row') {
+  <tr class="jb-skeleton__table-row" *ngFor="let _ of items">
+    <td class="jb-skeleton__cell">
+      <div class="jb-skeleton__bar" style="width: 40px; height: 16px;"></div>
+    </td>
+    <td class="jb-skeleton__cell">
+      <div class="jb-skeleton__bar" style="width: 60%; height: 16px;"></div>
+    </td>
+    <td class="jb-skeleton__cell">
+      <div class="jb-skeleton__bar" style="width: 50%; height: 16px;"></div>
+    </td>
+    <td class="jb-skeleton__cell">
+      <div class="jb-skeleton__bar" style="width: 40%; height: 16px;"></div>
+    </td>
+    <td class="jb-skeleton__cell">
+      <div class="jb-skeleton__bar" style="width: 55%; height: 16px;"></div>
+    </td>
+    <td class="jb-skeleton__cell">
+      <div class="jb-skeleton__actions">
+        <div class="jb-skeleton__bar jb-skeleton__circular" style="width: 32px; height: 32px;"></div>
+        <div class="jb-skeleton__bar jb-skeleton__circular" style="width: 32px; height: 32px;"></div>
+      </div>
+    </td>
+  </tr>
+} @else {
+  <div 
+    class="jb-skeleton__element"
+    [style.width]="width()"
+    [style.height]="height()"
+    *ngFor="let _ of items">
+  </div>
+}

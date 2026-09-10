@@ -16,6 +16,9 @@ namespace JabilTest.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Director>().ToTable("Director");
+            modelBuilder.Entity<Movie>().ToTable("Movies");
             
             // Configuramos el comportamiento al borrar (Delete Cascade)
             modelBuilder.Entity<Movie>()

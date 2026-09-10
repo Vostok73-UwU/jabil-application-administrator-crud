@@ -1,0 +1,27 @@
+<header class="jb-header" role="banner">
+  <div class="header-content">
+    <a routerLink="/directors" class="brand" aria-label="Jabil Admin Home">
+      <mat-icon class="brand-icon">admin_panel_settings</mat-icon>
+      <span class="brand-text">Jabil Admin</span>
+    </a>
+    
+    <nav class="nav-tabs" aria-label="Navegación principal">
+      <a mat-button routerLink="/directors" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>person</mat-icon>
+        <span>Directores</span>
+      </a>
+      <a mat-button routerLink="/movies" routerLinkActive="active">
+        <mat-icon>movie</mat-icon>
+        <span>Películas</span>
+      </a>
+    </nav>
+  </div>
+  
+  <mat-progress-bar mode="indeterminate" *ngIf="loadingService.isLoading | async" class="loading-bar"></mat-progress-bar>
+</header>
+
+<main class="jb-main" role="main">
+  <div class="page-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+</main>
