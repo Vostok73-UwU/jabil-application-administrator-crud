@@ -69,20 +69,3 @@ Siga estos pasos en orden para levantar el entorno de desarrollo correctamente.
 5. Abra `http://localhost:4200` en el navegador.
 
 ---
-
-## 💡 Notas para el Evaluador
-
-*   **Reactividad Optimizada:** El Frontend implementa Signals de Angular para actualizar el DOM de forma reactiva.
-*   **Integridad Relacional:** Las películas pertenecen a un director mediante una llave foránea. La eliminación de un director utiliza borrado en cascada, por lo que también elimina sus películas asociadas.
-*   **UI/UX:** Se construyeron componentes altamente personalizados (inputs, selects, modales) sobre Angular Material para cumplir con un estándar visual limpio y corporativo, resolviendo problemas complejos de maquetación (Z-Index / Stacking Contexts).
-
-## 🔍 Verificación rápida
-
-Con ambos procesos ejecutándose, estas direcciones deben estar disponibles:
-
-*   API: `http://localhost:5020/swagger`
-*   Directores: `http://localhost:5020/api/Directors`
-*   Películas: `http://localhost:5020/api/Movies`
-*   Frontend: `http://localhost:4200`
-
-La solución `JabilTest.slnx` contiene el proyecto backend. El frontend se ejecuta desde la carpeta `Frontend` con npm.
